@@ -10,6 +10,12 @@ namespace CookBook.Data
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
+        public DbSet<Recipe> Recipes { get; set; } = null!;
+
+        public DbSet<Ingredient> Ingredients { get; set; } = null!;
+
+        public DbSet<Category> Categories { get; set; } = null!;
+
         public ApplicationDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions)
             : base(options, operationalStoreOptions)
         {
