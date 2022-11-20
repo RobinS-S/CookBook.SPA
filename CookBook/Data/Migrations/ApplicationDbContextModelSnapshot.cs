@@ -560,7 +560,7 @@ namespace CookBook.Data.Migrations
 
             modelBuilder.Entity("CookBook.Models.Recipe", b =>
                 {
-                    b.OwnsMany("CookBook.Models.RecipeIngredientAmount", "IngredientAmounts", b1 =>
+                    b.OwnsMany("CookBook.Models.Recipe.IngredientAmounts#CookBook.Models.RecipeIngredientAmount", "IngredientAmounts", b1 =>
                         {
                             b1.Property<long>("RecipeId")
                                 .HasColumnType("bigint")

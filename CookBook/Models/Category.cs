@@ -6,20 +6,20 @@
     public class Category
         : Entity, IAggregateRoot
     {
-        public string Name { get; set; }
+        private IEnumerable<Recipe> recipeIds;
 
-        public ICollection<Recipe> Recipes { get; set; }
+        public string Name { get; set; }
 
         public Category(string name)
         {
             this.Name = name;
-            Recipes = null!;
+            recipeIds = null!;
         }
 
         protected Category()
         {
             Name = null!;
-            Recipes = null!;
+            recipeIds = null!;
         }
     }
 }
