@@ -10,7 +10,7 @@ namespace CookBook.Data.Configurations
         public void Configure(EntityTypeBuilder<Recipe> builder)
         {
             builder.HasMany(r => r.Categories)
-                .WithMany(c => c.Recipes)
+                .WithMany("recipeIds")
                 .UsingEntity<RecipeCategory>(l =>
                     l.HasOne(rc => rc.Category)
                     .WithMany()

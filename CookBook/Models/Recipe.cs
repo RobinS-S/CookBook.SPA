@@ -9,10 +9,10 @@
         public string Title { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
-        public ICollection<Category> Categories { get; set; }
-        public ICollection<RecipeIngredientAmount> IngredientAmounts { get; set; }
+        public IEnumerable<Category> Categories { get; set; }
+        public IEnumerable<RecipeIngredientAmount> IngredientAmounts { get; set; }
 
-        public Recipe(string title, string description, ICollection<Category> categories, ICollection<RecipeIngredientAmount> ingredientAmounts, string shortDescription = null!)
+        public Recipe(string title, string description, IEnumerable<Category> categories, IEnumerable<RecipeIngredientAmount> ingredientAmounts, string shortDescription = null!)
         {
             this.Title = title;
             this.Description = description;
