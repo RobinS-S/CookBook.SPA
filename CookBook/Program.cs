@@ -1,8 +1,11 @@
 using CookBook.Data;
 using CookBook.Models;
+using CookBook.Services;
+using CookBook.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.OpenApi.Models;
 
 namespace CookBook
 {
@@ -30,8 +33,17 @@ namespace CookBook
             builder.Services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddNewtonsoftJson();
             builder.Services.AddRazorPages();
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CookBook API", Version = "v1" });
+            });
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             var app = builder.Build();
 
@@ -49,7 +61,10 @@ namespace CookBook
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CookBook API");
+                });
             };
 
             app.UseHttpsRedirection();
