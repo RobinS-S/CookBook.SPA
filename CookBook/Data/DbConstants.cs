@@ -1,7 +1,6 @@
-﻿namespace CookBook.Data
+﻿namespace CookBook.Data;
+
+public class DbConstants
 {
-    public class DbConstants
-    {
-        public const string SchemaName = "cook_book";
-    }
+    public const string SchemaName = "cook_book";
 }
