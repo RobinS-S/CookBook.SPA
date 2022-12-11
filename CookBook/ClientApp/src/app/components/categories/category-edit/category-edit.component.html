@@ -1,0 +1,43 @@
+<ng-container *ngIf="{ category: category$ | async } as valuesObj">
+  <div class="card bg-light">
+    <div class="card-body">
+      <form [formGroup]="form">
+        <div class="mb-3">
+          <label for="name" class="form-label text-muted">Name *</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputName"
+            formControlName="name" />
+        </div>
+
+        <div class="mb-3">
+          <label for="name" class="form-label text-muted">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputDescription"
+            formControlName="description" />
+        </div>
+        <div class="d-flex flex-row-reverse">
+          <div class="btn-group" role="group" aria-label="Actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              (click)="save()"
+              [disabled]="form.invalid">
+              {{ valuesObj.category?.id ? "Save" : "Add" }}
+            </button>
+            <button
+              type="submit"
+              class="btn btn-danger"
+              (click)="remove(valuesObj.category!.id!)"
+              *ngIf="valuesObj.category?.id">
+              Remove
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-container>

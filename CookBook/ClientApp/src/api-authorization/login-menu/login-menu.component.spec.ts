@@ -1,35 +1,34 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { LoginMenuComponent } from './login-menu.component';
-import { AuthorizeService } from '../authorize.service';
-import { of } from 'rxjs';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterTestingModule } from "@angular/router/testing";
+import { of } from "rxjs";
+import { LoginMenuComponent } from "./login-menu.component";
+import { AuthorizeService } from "../authorize.service";
 
-describe('LoginMenuComponent', () => {
+describe("LoginMenuComponent", () => {
   let component: LoginMenuComponent;
   let fixture: ComponentFixture<LoginMenuComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule], 
-      declarations: [ LoginMenuComponent ]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule],
+      declarations: [LoginMenuComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
-    let authService = TestBed.get(AuthorizeService);
+    const authService = TestBed.get(AuthorizeService);
 
-    spyOn(authService, 'ensureUserManagerInitialized').and.returnValue(
-      Promise.resolve());
-    spyOn(authService, 'getUserFromStorage').and.returnValue(
-      of(null));
+    spyOn(authService, "ensureUserManagerInitialized").and.returnValue(
+      Promise.resolve()
+    );
+    spyOn(authService, "getUserFromStorage").and.returnValue(of(null));
 
     fixture = TestBed.createComponent(LoginMenuComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

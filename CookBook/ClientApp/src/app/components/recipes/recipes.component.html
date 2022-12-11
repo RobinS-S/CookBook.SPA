@@ -1,0 +1,37 @@
+<div class="row" *ngIf="recipes$ | async as recipes">
+  <div class="col-4 overflow-auto recipes-list">
+    <div class="card mb-3 bg-light">
+      <div class="card-body">
+        <a class="btn btn-info w-100" [routerLink]="['/recipes/add']">
+          Add recipe
+        </a>
+      </div>
+    </div>
+
+    <div class="card mb-3 bg-light" *ngFor="let recipe of recipes">
+      <div class="card-body">
+        <h5 class="card-title">{{ recipe.title }}</h5>
+        <p class="card-text" *ngIf="recipe.description">
+          {{ recipe.description }}
+        </p>
+        <h6 class="card-subtitle mb-2 text-muted">
+          Suitable for {{ recipe.suitableFor }}
+          {{ recipe.suitableFor === 1 ? "person" : "people" }}
+        </h6>
+        <div class="btn-group" role="group" aria-label="Actions">
+          <a class="btn btn-primary" [routerLink]="['/recipes/' + recipe.id]">
+            Visit
+          </a>
+          <a
+            class="btn btn-secondary"
+            [routerLink]="['/recipes/' + recipe.id + '/edit']">
+            Edit
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-8">
+    <router-outlet></router-outlet>
+  </div>
+</div>

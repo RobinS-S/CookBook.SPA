@@ -1,0 +1,55 @@
+<ng-container
+  *ngIf="{
+    recipe: recipe$ | async,
+    categories: categories$ | async
+  } as valuesObj">
+  <div class="card bg-light">
+    <div class="card-body" *ngIf="valuesObj.recipe">
+      <h5 class="card-title">{{ valuesObj.recipe.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        {{ valuesObj.recipe.description }}
+      </h6>
+      <p class="card-text">
+        Suitable for {{ valuesObj.recipe.suitableFor }}
+        {{ valuesObj.recipe.suitableFor > 1 ? "people" : "person" }}
+      </p>
+      <h6>Categories:</h6>
+      <ul class="list-group mb-2">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+          *ngFor="let categoryId of valuesObj.recipe.categoryIds">
+          {{ (categoryId | getById : valuesObj.categories!)?.name }}
+        </li>
+      </ul>
+      <h6>Required ingredients:</h6>
+      <ul class="list-group mb-2">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+          *ngFor="let ingredientEntry of valuesObj.recipe.ingredientEntries">
+          {{ ingredientEntry.product }}
+          <span class="badge bg-primary badge-pill">
+            {{ ingredientEntry.quantity }}
+            {{ ingredientEntry.unit }}
+          </span>
+        </li>
+      </ul>
+      <h6>Steps:</h6>
+      <ul class="list-group mb-2">
+        <li
+          class="list-group-item"
+          *ngFor="let preparationStep of valuesObj.recipe?.preparation">
+          <span class="badge bg-primary badge-pill">
+            {{ preparationStep.position }}
+          </span>
+          {{ preparationStep.description }}
+        </li>
+      </ul>
+      <button
+        type="submit"
+        class="btn btn-info"
+        (click)="sendMail(valuesObj.recipe.title)">
+        Send as mail
+      </button>
+    </div>
+  </div>
+</ng-container>
