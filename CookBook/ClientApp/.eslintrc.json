@@ -1,0 +1,84 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    ".angular/",
+    "dist/",
+    "node_modules/",
+    "src/assets/",
+    "src/test.ts"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "parserOptions": {
+        "project": [
+          "tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "airbnb-base",
+        "airbnb-typescript/base",
+        "eslint:recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:rxjs/recommended",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
+        
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/lines-between-class-members": 0,
+
+        "import/prefer-default-export": "off",
+        "linebreak-style": 0,
+        "max-len": 0,
+        "quotes": [1, "double", { "avoidEscape": true }],
+        "lines-between-class-members": 0,
+        "class-methods-use-this": 0,
+        "prefer-destructuring": 0,
+
+        "rxjs/no-implicit-any-catch": 0,
+        "rxjs-angular/prefer-async-pipe": 0,
+        "rxjs-angular/prefer-composition": 0,
+        "rxjs-angular/prefer-takeuntil": 0
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended"
+      ],
+      "rules": {}
+    },
+    {
+      "files": ["*.html"],
+      "excludedFiles": ["*inline-template-*.component.html"],
+      "extends": ["plugin:prettier/recommended"],
+      "rules": {
+        "prettier/prettier": [1, { "parser": "angular" }]
+      }
+    }
+  ],
+  "plugins": ["rxjs-angular", "only-warn"]
+}

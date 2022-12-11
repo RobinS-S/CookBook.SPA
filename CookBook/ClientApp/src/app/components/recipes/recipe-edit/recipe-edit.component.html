@@ -1,0 +1,276 @@
+<ng-container
+  *ngIf="{
+    recipe: recipe$ | async,
+    categories: categories$ | async
+  } as valuesObj">
+  <div class="card bg-light">
+    <div class="card-body">
+      <form [formGroup]="form">
+        <div class="mb-3">
+          <label for="inputTitle" class="form-label text-muted text-muted">
+            Title *
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputTitle"
+            formControlName="title" />
+        </div>
+        <div class="mb-3">
+          <label for="inputSuitableFor" class="form-label text-muted">
+            Suitable for amount of people *
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="9999"
+            class="form-control"
+            id="inputSuitableFor"
+            formControlName="suitableFor" />
+        </div>
+        <div class="mb-3">
+          <label for="inputDescription" class="form-label text-muted">
+            Description *
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputDescription"
+            formControlName="description" />
+        </div>
+
+        <div class="mb-3">
+          <hr />
+          <div class="row">
+            <div class="col-6 h6">Category name</div>
+            <div class="col-6 h6"></div>
+          </div>
+          <div
+            class="row mb-1"
+            *ngFor="let categoryId of form.value.categoryIds">
+            <div class="col-6">
+              {{ (categoryId | getById : valuesObj.categories!)?.name }}
+            </div>
+            <div class="col-6 d-flex flex-row-reverse">
+              <button
+                type="submit"
+                class="btn btn-danger"
+                (click)="removeCategory(categoryId)">
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <div class="row mt-1">
+            <div class="col-10" [formGroup]="categoryAddForm">
+              <label for="inputCategorySelect" class="form-label text-muted">
+                Category *
+              </label>
+              <select
+                id="inputCategorySelect"
+                class="form-select"
+                aria-label="Category to add"
+                formControlName="categoryId">
+                <option
+                  [value]="category.id"
+                  *ngFor="let category of valuesObj.categories">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-2 d-flex flex-row-reverse">
+              <button
+                type="submit"
+                class="btn btn-secondary h-100"
+                (click)="addCategory()">
+                Add
+              </button>
+            </div>
+          </div>
+          <hr />
+        </div>
+
+        <div class="mb-3">
+          <hr />
+          <div class="row">
+            <div class="col-4 h6">Ingredient name</div>
+            <div class="col-4 h6">Amount</div>
+            <div class="col-4 h6"></div>
+          </div>
+          <div
+            class="row mb-1"
+            *ngFor="
+              let ingredientEntry of form.value.ingredientEntries;
+              let i = index
+            "
+            [ngClass]="{
+              'bg-primary': currentEditingIngredient === i
+            }">
+            <div class="col-4">
+              {{ ingredientEntry.product }}
+            </div>
+            <div class="col-4">
+              {{ ingredientEntry.quantity }}
+              {{ ingredientEntry.unit }}
+            </div>
+            <div class="col-4 d-flex flex-row-reverse">
+              <div class="btn-group" role="group" aria-label="Actions">
+                <button
+                  type="submit"
+                  class="btn btn-info"
+                  (click)="editIngredient(i)">
+                  Edit
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-danger"
+                  (click)="removeIngredient(i)">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-1" [formGroup]="ingredientAddForm">
+            <div class="col-6">
+              <label for="inputProduct" class="form-label text-muted">
+                Product *
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="inputProduct"
+                formControlName="product" />
+            </div>
+            <div class="col-2">
+              <div class="mb-3">
+                <label for="inputQuantity" class="form-label text-muted">
+                  Quantity *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  class="form-control"
+                  id="inputQuantity"
+                  formControlName="quantity" />
+              </div>
+            </div>
+            <div class="col-2">
+              <div class="mb-3">
+                <label for="inputUnit" class="form-label text-muted">
+                  Unit
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="inputUnit"
+                  formControlName="unit" />
+              </div>
+            </div>
+            <div class="col-2 d-flex flex-row-reverse">
+              <button
+                type="submit"
+                class="btn btn-secondary h-100"
+                (click)="saveIngredient()">
+                {{ currentEditingIngredient === -1 ? "Add" : "Save" }}
+              </button>
+            </div>
+          </div>
+          <hr />
+        </div>
+
+        <div class="mb-3">
+          <div class="row">
+            <div class="col-4 h6">Preparation #</div>
+            <div class="col-4 h6">Description</div>
+            <div class="col-4 h6"></div>
+          </div>
+          <div
+            class="row mb-1"
+            *ngFor="
+              let preparationStep of form.value.preparation;
+              let i = index
+            "
+            [ngClass]="{
+              'bg-primary': currentEditingStep === i
+            }">
+            <div class="col-4">
+              {{ preparationStep.position }}
+            </div>
+            <div class="col-4">
+              {{ preparationStep.description }}
+            </div>
+            <div class="col-4 d-flex flex-row-reverse">
+              <div class="btn-group" role="group" aria-label="Actions">
+                <button
+                  type="submit"
+                  class="btn btn-info"
+                  (click)="editPreparationStep(i)">
+                  Edit
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-danger"
+                  (click)="removePreparationStep(i)">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-1" [formGroup]="preparationStepForm">
+            <div class="col-3">
+              <label
+                for="inputPreparationPosition"
+                class="form-label text-muted">
+                Position *
+              </label>
+              <input
+                type="number"
+                min="1"
+                class="form-control"
+                id="inputPreparationPosition"
+                formControlName="position" />
+            </div>
+            <div class="col-7">
+              <div class="mb-3">
+                <label for="inputDescription" class="form-label text-muted">
+                  Description *
+                </label>
+                <textarea
+                  type="text"
+                  class="form-control"
+                  id="inputDescription"
+                  formControlName="description"></textarea>
+              </div>
+            </div>
+            <div class="col-2 d-flex flex-row-reverse">
+              <button
+                type="submit"
+                class="btn btn-secondary h-100"
+                (click)="savePreparationStep()">
+                {{ currentEditingStep === -1 ? "Add" : "Save" }}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="btn-group" role="group" aria-label="Actions">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            (click)="save()"
+            [disabled]="form.invalid">
+            {{ valuesObj.recipe?.id ? "Save" : "Add" }}
+          </button>
+          <button
+            type="submit"
+            class="btn btn-danger"
+            (click)="remove(valuesObj.recipe!.id!)"
+            *ngIf="valuesObj.recipe?.id">
+            Remove
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-container>
