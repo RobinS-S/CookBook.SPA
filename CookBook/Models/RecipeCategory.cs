@@ -1,22 +1,23 @@
-﻿using CookBook.Data.SeedWork;
+﻿namespace CookBook.Models;
 
-namespace CookBook.Models
+public class RecipeCategory
 {
-    public class RecipeCategory : Entity
+    public RecipeCategory(long categoryId, long recipeId)
     {
-        public Recipe Recipe { get; set; }
-        public Category Category { get; set; }
-
-        public RecipeCategory(Recipe recipe, Category category)
-        {
-            Recipe = recipe;
-            Category = category;
-        }
-
-        protected RecipeCategory()
-        {
-            Recipe = null!;
-            Category = null!;
-        }
+        CategoryId = categoryId;
+        RecipeId = recipeId;
+        Category = null!;
+        Recipe = null!;
     }
+
+    protected RecipeCategory()
+    {
+        Category = null!;
+        Recipe = null!;
+    }
+
+    public Category Category { get; set; }
+    public Recipe Recipe { get; set; }
+    public long CategoryId { get; set; }
+    public long RecipeId { get; set; }
 }

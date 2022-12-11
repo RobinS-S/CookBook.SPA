@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CookBook.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221120001938_CookBookModels")]
+    [Migration("20221205011232_CookBookModels")]
     partial class CookBookModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace CookBook.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("cook_book")
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "6.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -114,6 +114,12 @@ namespace CookBook.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(128)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("description");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -125,28 +131,6 @@ namespace CookBook.Data.Migrations
                         .HasName("pk_categories");
 
                     b.ToTable("categories", "cook_book");
-                });
-
-            modelBuilder.Entity("CookBook.Models.Ingredient", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .IsUnicode(false)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_ingredients");
-
-                    b.ToTable("ingredients", "cook_book");
                 });
 
             modelBuilder.Entity("CookBook.Models.Recipe", b =>
@@ -165,12 +149,9 @@ namespace CookBook.Data.Migrations
                         .HasColumnType("character varying(512)")
                         .HasColumnName("description");
 
-                    b.Property<string>("ShortDescription")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .IsUnicode(false)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("short_description");
+                    b.Property<int>("SuitableFor")
+                        .HasColumnType("integer")
+                        .HasColumnName("suitable_for");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -187,28 +168,18 @@ namespace CookBook.Data.Migrations
 
             modelBuilder.Entity("CookBook.Models.RecipeCategory", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("category_id")
+                    b.Property<long>("CategoryId")
                         .HasColumnType("bigint")
                         .HasColumnName("category_id");
 
-                    b.Property<long>("recipe_id")
+                    b.Property<long>("RecipeId")
                         .HasColumnType("bigint")
                         .HasColumnName("recipe_id");
 
-                    b.HasKey("Id")
+                    b.HasKey("CategoryId", "RecipeId")
                         .HasName("pk_recipe_category");
 
-                    b.HasIndex("category_id")
-                        .HasDatabaseName("ix_recipe_category_category_id");
-
-                    b.HasIndex("recipe_id")
+                    b.HasIndex("RecipeId")
                         .HasDatabaseName("ix_recipe_category_recipe_id");
 
                     b.ToTable("recipe_category", "cook_book");
@@ -488,13 +459,11 @@ namespace CookBook.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("text")
                         .HasColumnName("login_provider");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("text")
                         .HasColumnName("provider_key");
 
                     b.Property<string>("ProviderDisplayName")
@@ -541,13 +510,11 @@ namespace CookBook.Data.Migrations
                         .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("text")
                         .HasColumnName("login_provider");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.Property<string>("Value")
@@ -562,7 +529,47 @@ namespace CookBook.Data.Migrations
 
             modelBuilder.Entity("CookBook.Models.Recipe", b =>
                 {
-                    b.OwnsMany("CookBook.Models.RecipeIngredientAmount", "IngredientAmounts", b1 =>
+                    b.OwnsMany("CookBook.Models.IngredientEntry", "IngredientEntries", b1 =>
+                        {
+                            b1.Property<long>("RecipeId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("recipe_id");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Product")
+                                .IsRequired()
+                                .HasMaxLength(64)
+                                .IsUnicode(false)
+                                .HasColumnType("character varying(64)")
+                                .HasColumnName("product");
+
+                            b1.Property<int>("Quantity")
+                                .HasColumnType("integer")
+                                .HasColumnName("quantity");
+
+                            b1.Property<string>("Unit")
+                                .HasMaxLength(32)
+                                .IsUnicode(false)
+                                .HasColumnType("character varying(32)")
+                                .HasColumnName("unit");
+
+                            b1.HasKey("RecipeId", "Id")
+                                .HasName("pk_ingredient_entry");
+
+                            b1.ToTable("ingredient_entry", "cook_book");
+
+                            b1.WithOwner()
+                                .HasForeignKey("RecipeId")
+                                .HasConstraintName("fk_ingredient_entry_recipes_recipe_id");
+                        });
+
+                    b.OwnsMany("CookBook.Models.PreparationStep", "Preparation", b1 =>
                         {
                             b1.Property<long>("RecipeId")
                                 .HasColumnType("bigint")
@@ -575,54 +582,42 @@ namespace CookBook.Data.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<long>("Id"));
 
-                            b1.Property<string>("Amount")
+                            b1.Property<string>("Description")
                                 .IsRequired()
-                                .HasMaxLength(64)
-                                .IsUnicode(false)
-                                .HasColumnType("character varying(64)")
-                                .HasColumnName("amount");
+                                .HasColumnType("text")
+                                .HasColumnName("description");
 
-                            b1.Property<long>("IngredientId")
-                                .HasColumnType("bigint")
-                                .HasColumnName("ingredient_id");
+                            b1.Property<int>("Position")
+                                .HasColumnType("integer")
+                                .HasColumnName("position");
 
                             b1.HasKey("RecipeId", "Id")
-                                .HasName("pk_recipe_ingredient_amount");
+                                .HasName("pk_preparation_step");
 
-                            b1.HasIndex("IngredientId")
-                                .HasDatabaseName("ix_recipe_ingredient_amount_ingredient_id");
-
-                            b1.ToTable("recipe_ingredient_amount", "cook_book");
-
-                            b1.HasOne("CookBook.Models.Ingredient", "Ingredient")
-                                .WithMany()
-                                .HasForeignKey("IngredientId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired()
-                                .HasConstraintName("fk_recipe_ingredient_amount_ingredients_ingredient_id");
+                            b1.ToTable("preparation_step", "cook_book");
 
                             b1.WithOwner()
                                 .HasForeignKey("RecipeId")
-                                .HasConstraintName("fk_recipe_ingredient_amount_recipes_recipe_id");
-
-                            b1.Navigation("Ingredient");
+                                .HasConstraintName("fk_preparation_step_recipes_recipe_id");
                         });
 
-                    b.Navigation("IngredientAmounts");
+                    b.Navigation("IngredientEntries");
+
+                    b.Navigation("Preparation");
                 });
 
             modelBuilder.Entity("CookBook.Models.RecipeCategory", b =>
                 {
                     b.HasOne("CookBook.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("category_id")
+                        .WithMany("RecipeCategories")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_recipe_category_categories_category_id");
 
                     b.HasOne("CookBook.Models.Recipe", "Recipe")
-                        .WithMany()
-                        .HasForeignKey("recipe_id")
+                        .WithMany("RecipeCategories")
+                        .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_recipe_category_recipes_recipe_id");
@@ -687,6 +682,16 @@ namespace CookBook.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("CookBook.Models.Category", b =>
+                {
+                    b.Navigation("RecipeCategories");
+                });
+
+            modelBuilder.Entity("CookBook.Models.Recipe", b =>
+                {
+                    b.Navigation("RecipeCategories");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,10 @@
-﻿namespace CookBook.Data.SeedWork
+﻿namespace CookBook.Data.SeedWork;
+
+public abstract class Entity<T>
 {
-    public abstract class Entity
-    {
-        public long Id { get; protected set; }
-    }
+    public T Id { get; protected set; } = default!;
+}
+
+public abstract class Entity : Entity<long>
+{
 }
