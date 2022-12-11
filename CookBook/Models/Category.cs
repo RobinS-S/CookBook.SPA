@@ -1,25 +1,20 @@
-﻿namespace CookBook.Models
+﻿using CookBook.Data.SeedWork;
+
+namespace CookBook.Models;
+
+public class Category
+    : Entity, IAggregateRoot
 {
-#nullable enable
-    using Data.SeedWork;
-
-    public class Category
-        : Entity, IAggregateRoot
+    public Category(string name)
     {
-        private IEnumerable<Recipe> recipeIds;
-
-        public string Name { get; set; }
-
-        public Category(string name)
-        {
-            this.Name = name;
-            recipeIds = null!;
-        }
-
-        protected Category()
-        {
-            Name = null!;
-            recipeIds = null!;
-        }
+        Name = name;
     }
+
+    public string Name { get; set; }
+
+    public string? Description { get; set; }
+
+    public ICollection<Recipe> Recipes { get; set; } = new HashSet<Recipe>();
+
+    public ICollection<RecipeCategory> RecipeCategories { get; set; } = new HashSet<RecipeCategory>();
 }

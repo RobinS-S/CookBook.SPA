@@ -2,49 +2,63 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CookBook.Data.Configurations
-{
-    public class RecipeEntityTypeConfiguration
-        : IEntityTypeConfiguration<Recipe>
-    {
-        public void Configure(EntityTypeBuilder<Recipe> builder)
-        {
-            builder.HasMany(r => r.Categories)
-                .WithMany("recipeIds")
-                .UsingEntity<RecipeCategory>(l =>
-                    l.HasOne(rc => rc.Category)
-                    .WithMany()
-                    .HasForeignKey("category_id"),
-                    r => r.HasOne(rc => rc.Recipe)
-                    .WithMany()
-                    .HasForeignKey("recipe_id")
-                );
+namespace CookBook.Data.Configurations;
 
-            builder.OwnsMany(r => r.IngredientAmounts, ria =>
-            {
-                ria.WithOwner();
-                ria.HasOne(ria => ria.Ingredient)
-                    .WithMany();
-                ria.Property(p => p.Amount)
-                    .HasMaxLength(64)
-                    .IsUnicode(false)
-                    .IsRequired();
-            });
+public class RecipeEntityTypeConfiguration
+    : IEntityTypeConfiguration<Recipe>
+{
+    public void Configure(EntityTypeBuilder<Recipe> builder)
+    {
+        builder.HasMany(r => r.Categories)
+            .WithMany(c => c.Recipes)
+            .UsingEntity<RecipeCategory>(b => b
+                    .HasOne(rc => rc.Category)
+                    .WithMany(c => c.RecipeCategories),
+                b => b
+                    .HasOne(rc => rc.Recipe)
+                    .WithMany(r => r.RecipeCategories),
+                b => { b.ToTable("recipe_category"); });
+
+        builder.OwnsMany(r => r.IngredientEntries, ri =>
+        {
+            ri.WithOwner();
+
+            ri.Property(c => c.Quantity)
+                .IsRequired();
+
+            ri.Property(c => c.Product)
+                .HasMaxLength(64)
+                .IsUnicode(false)
+                .IsRequired();
+
+            ri.Property(c => c.Unit)
+                .HasMaxLength(32)
+                .IsUnicode(false);
+        });
+
+        builder.OwnsMany(r => r.Preparation, p =>
+        {
+            p.WithOwner();
 
             builder.Property(c => c.Title)
                 .HasMaxLength(64)
                 .IsUnicode(false)
                 .IsRequired();
 
-            builder.Property(c => c.ShortDescription)
-                .HasMaxLength(128)
-                .IsUnicode(false)
-                .IsRequired();
-
             builder.Property(c => c.Description)
-                .HasMaxLength(512)
-                .IsUnicode(false)
+                .HasMaxLength(2048)
+                .IsUnicode()
                 .IsRequired();
-        }
+        });
+
+        builder.Property(c => c.Title)
+            .HasMaxLength(64)
+            .IsUnicode(false)
+            .IsRequired();
+
+        builder.Property(c => c.Description)
+            .HasMaxLength(512)
+            .IsUnicode(false)
+            .IsRequired();
     }
 }

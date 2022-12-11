@@ -1,6 +1,5 @@
-﻿namespace CookBook.Data.SeedWork
+﻿namespace CookBook.Data.SeedWork;
+
+public interface IAggregateRoot
 {
-    public interface IAggregateRoot
-    {
-    }
 }
